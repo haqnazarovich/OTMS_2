@@ -1,0 +1,136 @@
+﻿@model IndexViewModel;
+
+@{
+    ViewData["Title"] = "Главная страница";
+}
+
+
+<form action="/Home/Index" method="post">
+
+    <h1>Расчёт</h1>
+    <h2>Введите данные (вариант 10 вписан в подсказках полей Input)</h2>
+
+    <table align="center" id="table" class="table table-bordered tableStretched">
+        <tr>
+            <th>Шаг по высоте слоя, м</th>
+            <th>Высота слоя, м</th>
+            <th>Диаметр агрегата, м</th>
+            <th>Начальная температура газа, C </th>
+            <th>Скорость газа на свободное сечение шахты, м/с</th>
+            <th>Средняя теплоемкость газа, кДж/(м3 • К)</th>
+            <th>Объемный коэффициент теплоотдачи, Вт/(м3 • К)</th>
+            <th>Начальная температура материала, C</th>
+            <th>Расход материалов кг/с</th>
+            <th>Теплоемкость материалов, кДж/(кг • К)</th>
+        </tr>
+
+        @{
+            <tr id="tr">
+
+                <td>
+                    <input type="text" required name="CalculationStep" value="@Model.Input.CalculationStep" class="form-control CalculationStep" id="CalculationStep">
+                </td>
+                <td>
+                    <input type="number" step="any" required name="Height" value="@Model.Input.Height.ToString()" placeholder="4" class="form-control Height" id="Height">
+                </td>
+                <td>
+                    <input type="text" required name="Diameter" value="@Model.Input.Diameter.ToString()" placeholder="2,2" class="form-control Diameter" id="Diameter">
+                </td>
+                <td>
+                    <input type="number" step="any" required inputmode="decimal" name="GasStartTemperature" value="@Model.Input.GasStartTemperature.ToString()" placeholder="700" class="form-control GasStartTemperature" id="GasStartTemperature">
+                </td>
+                <td>
+                    <input type="text" required name="Speed" value="@Model.Input.Speed.ToString()" placeholder="0,74" class="form-control Speed" id="Speed">
+                </td>
+                <td>
+                    <input type="text" required name="GasHeatCapacity" value="@Model.Input.GasHeatCapacity.ToString()" placeholder="1,35" class="form-control HeatCapacity" id="HeatCapacity">
+                </td>
+                <td>
+                    <input type="number" step="any" required name="Vol_heat_transfer_coeff" value="@Model.Input.Vol_heat_transfer_coeff.ToString()" placeholder="2440" class="form-control Vol_heat_transfer_coeff" id="Vol_heat_transfer_coeff">
+                </td>
+                <td>
+                    <input type="number" step="any" required name="MaterialStartTemperature" value="@Model.Input.MaterialStartTemperature.ToString()" placeholder="5" class="form-control StartTemperature" id="StartTemperature">
+                </td>
+                <td>
+                    <input type="text" required name="MaterialWaste" value="@Model.Input.MaterialWaste.ToString()" placeholder="1,68" class="form-control Waste" id="Waste">
+                </td>
+                <td>
+                    <input type="text" required name="MaterialHeatCapacity" value="@Model.Input.MaterialHeatCapacity.ToString()" placeholder="1,49" class="form-control HeatCapacity" id="HeatCapacity">
+                </td>
+            </tr>
+        }
+
+    </table>
+
+    <button type="submit" id="Calculate" name="buttonType" class="btn btn-primary">Расчёт</button>
+
+</form>
+
+
+<!-------------------------------------------------------------------------------------------------------------------------->
+
+@{
+    if (Model.Result != null)
+    {
+        <h1>РЕЗУЛЬТАТЫ</h1>
+
+        <table align="center" id="table" class="table table-bordered">
+
+            <tr>
+                <th>Площадь поперечного сечения аппарата, м2</th>
+                <th>Расход газа, м3/c</th>
+                <th>Отношение теплоемкостей потоков</th>
+                <th>Полная относительная высота слоя</th>
+                <th>Какая-то формула лол</th>
+            </tr>
+
+            @{
+                <tr>
+
+                    <td>
+                        <input type="text" name="Agregat_Сross_Sectional_Area" value="@Model.Result.Agregat_Сross_Sectional_Area" class="form-control Agregat_Сross_Sectional_Area" id="Agregat_Сross_Sectional_Area">
+                    </td>
+                    <td>
+                        <input type="text" name="GasWaste" value="@Model.Result.GasWaste" class="form-control GasWaste" id="GasWaste">
+                    </td>
+                    <td>
+                        <input type="text" name="HeatCapacitiesRatio" value="@Model.Result.HeatCapacitiesRatio" class="form-control HeatCapacitiesRatio" id="HeatCapacitiesRatio">
+                    </td>
+                    <td>
+                        <input type="text" name="FullRelativelyHeight" value="@Model.Result.FullRelativelyHeight" class="form-control FullRelativelyHeight" id="FullRelativelyHeight">
+                    </td>
+                    <td>
+                        <input type="text" name="NoNameFormulaResult" value="@Model.Result.NoNameFormulaResult" class="form-control NoNameFormulaResult" id="NoNameFormulaResult">
+                    </td>
+
+                </tr>
+            }
+        </table>
+
+
+        <table align="center" id="table" class="table table-bordered">
+            <thead class="sticky-header">
+                <tr>
+                    <th>Температура материала, С</th>
+                    <th>Координаты у, м</th>
+                    <th>Температура газа, С</th>
+                </tr>
+            </thead>
+
+            @{
+                for (int i = 0; i < Model.StepsCount; i++)
+                {
+                    <tr>
+                        <td>@Model.Result.MaterialTemperaturesByHeight[i]</td>
+                        <td>@(Math.Round((double)(i * Model.Input.CalculationStep), 2))</td>
+                        <td>@Model.Result.GasTemperaturesByHeight[i]</td>
+
+                    </tr>
+                }
+            }
+        </table>
+    }
+}
+
+
+
